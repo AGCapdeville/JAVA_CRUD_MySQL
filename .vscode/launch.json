@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - example",
+            "request": "launch",
+            "mainClass": "app.example",
+            "projectName": "JDBC"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - AWTCounter",
+            "request": "launch",
+            "mainClass": "app.AWTCounter",
+            "projectName": "JDBC"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - App",
+            "request": "launch",
+            "mainClass": "app.App",
+            "projectName": "JDBC"
+        }
+    ]
+}
