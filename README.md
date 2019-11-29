@@ -1,7 +1,9 @@
 # JAVA_CRUD_MySQL
 
-# Below is the program running:
+# ERD of the MySQL DB
 ![ERD](/images_folder/ERD.png)
+
+# The Java program interacting with the DB
 ![terminal example 0](/images_folder/0.png)
 ![terminal example 1](/images_folder/1.png)
 ![terminal example 2](/images_folder/2.png)
