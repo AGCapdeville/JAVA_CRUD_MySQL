@@ -2,117 +2,130 @@ package app;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
 public class UpdateOrder {
 
-    public UpdateOrder(){
+    public UpdateOrder() {
     }
 
-    public void updateOrder(Connection connection, Scanner scanner, GUI display){
+    public void updateOrder(Connection connection, Scanner scanner, GUI display, ExistsQuery existsQuery) {
 
-        display.displayOrders(connection);
+        display.orders(connection);
 
-        System.out.println("Which Order Would You Like To Update? ( Enter In Order ID )\n");
+        String orderID = askOrderID(connection, scanner, display, existsQuery);
+        display.invoice(connection, Integer.parseInt(orderID));
 
-        String orderID="";
-        while(true){
-            orderID = scanner.next();
-            if(display.check(connection, orderID, "o_id", "orders")){
-                display.invoice(connection, Integer.parseInt(orderID));
-                update(connection, scanner, orderID, display);
-                break;
-            }else{
-                System.out.println(" = INVALID Order ID, ( Enter A Valid Order ID )\n");
-            }
+        String modLine = askLineID(connection, scanner, existsQuery, orderID);
+        int newQuantity = askNewQuantity(scanner);
+
+        double linePrice = getOrderLinePrice(connection, orderID, modLine);
+        String oldEst = alterOrderEta(connection, orderID);
+
+        DateHandler dh = new DateHandler();
+        String newEst = dh.etaDate(oldEst);
+        double newTotal = (newQuantity * linePrice);
+
+        System.out.println("Line to be altered:" + modLine + " Price:" + linePrice + " * " + newQuantity + "\n");
+        System.out.println("Old Order EST: " + oldEst + " New Order EST:" + newEst + "\n");
+        
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+            statement.execute("UPDATE orders SET  o_est = '" + newEst + "' WHERE o_id = '" + orderID + "';");
+            statement.execute("UPDATE line SET l_quantity = '" + newQuantity + "', l_item_cost= '" + newTotal
+                    + "' WHERE o_id = '" + orderID + "' AND l_id = '" + modLine + "';");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = UPDATED: = = = = = = = = = = = = = = = = = = = = = = = =");
+        System.out.println(
+                "\n= = = = = = = = = = = = = = = = = = = = = = = UPDATED: = = = = = = = = = = = = = = = = = = = = = = = = =");
         display.invoice(connection, Integer.parseInt(orderID));
         System.out.println("Enter any character and then press:'Enter/Return' to return to Main Menu\n");
         scanner.next();
-        
     }
 
-    private void update(Connection connection, Scanner scanner, String orderID, GUI display){
-        System.out.println("Which Line Would You Like To Modify?");
+    private String askOrderID(Connection connection, Scanner scanner, GUI display, ExistsQuery existsQuery) {
+        System.out.println("= Which Order Would You Like To Update? ( Enter In Order ID )\n");
+        String id = "";
+        while (true) {
+            id = scanner.next();
+            if (existsQuery.check(connection, "orders", "o_id", id)) {
+                return id;
+            } else {
+                System.err.println(" = INVALID Order ID, ( Enter A Valid Order ID )\n");
+            }
+        }    
+    }
+
+    private String askLineID(Connection connection, Scanner scanner, ExistsQuery existsQuery, String orderID){
+        System.out.println("= Which Line Would You Like To Modify?      =");
         String modLine = "";
-        while(true){
-            System.out.println("= Enter A Valid Line Number\n");
+        while (true) {
+            System.out.println("= Enter A Valid Line Number                 =");
+
             modLine = scanner.next();
-            if( display.checkLine(connection, orderID, modLine) ){
-                break;
+            if (existsQuery.orderLine(connection, orderID, modLine)) {
+                return modLine;
             }
         }
+    }
 
-        System.out.println("= Enter New Quantity (Between 1 & 100) \n");
+    private int askNewQuantity(Scanner scanner) {
+        System.out.println("= Enter New Quantity (Between 1 & 100)      =");
         int newQuantity = -1;
-        while(true){
+        while (true) {
+            System.out.print("= New Quantity: ");
             String input = scanner.next();
-            try{ newQuantity = Integer.parseInt(input); }
-            catch(Exception e){
-                System.err.println("[INVALID INT SYNTAX: " + e.getMessage()+"]");
+            try {
+                newQuantity = Integer.parseInt(input);
+            } catch (Exception e) {
+                System.err.println("[ INVALID INT SYNTAX: " + e.getMessage() + " ]\n");
             }
-            if( newQuantity > 0 && newQuantity < 100 ){
-                break;
+            if (newQuantity > 0 && newQuantity < 100) {
+                return newQuantity;
             }
-            System.out.println("[ INVALID QUANTITY (QUANTITY MUST BE BETWEEN 1 & 100) ]\n");
-        }
+            System.err.println("[ INVALID QUANTITY (QUANTITY MUST BE BETWEEN 1 & 100) ]\n");
+        }    
+    }
 
-
-        try{
-            Statement statement = null;
+    private double getOrderLinePrice(Connection connection, String orderID, String line) {
+        String priceStr = "";
+        Statement statement = null;
+        try {
             statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM line WHERE line.o_id = '"+orderID+"' AND line.l_id = '"+modLine+"';");
-            String amount ="";
-            String checkLine ="";
-            while(resultSet.next()){
-                checkLine = resultSet.getString("l_id");
-                if(checkLine.contentEquals(modLine)){
-                    amount = resultSet.getString("l_quantity");
+            ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM line WHERE line.o_id = '" + orderID + "' AND line.l_id = '" + line + "';");
+            while (resultSet.next()) {
+                if (resultSet.getString("l_id").contentEquals(line)) {
+                    priceStr = resultSet.getString("l_price");
                 }
             }
-
-            // System.out.println("Line to be altered:"+line+" Current quantity:"+amount+" To: "+quantity+"\n");
-
-            String oldEst = getOrderEta(connection, orderID);
-            if(oldEst.contentEquals("null")){
-                System.out.println("INVALID ORDER ETA");
-            }else{
-                
-                DateHandler dh = new DateHandler();
-                String newEst = dh.etaDate(oldEst);
-                int newTotal = (newQuantity * Integer.parseInt(amount));
-
-                System.out.println("Line to be altered:"+modLine+" Current quantity:"+amount+" To: "+newQuantity+"\n");
-                System.out.println("Old Order EST: "+oldEst+" New Order EST:"+newEst+"\n");
-
-                statement.execute("UPDATE orders SET  o_est = '"+newEst+"' WHERE o_id = '"+orderID+"';");
-                statement.execute("UPDATE line SET l_quantity = '"+newQuantity+"', l_item_cost= '"+newTotal+"' WHERE o_id = '"+orderID+"' AND l_id = '"+modLine+"';");
-            }
-
-        }catch(Exception e){
-            System.err.println("[Conn: Update: Exception:" + e.getMessage()+"]");
+            return Double.parseDouble(priceStr);
+        } catch (Exception e) {
+            System.err.println("[ getOrderLinePrice ERROR: Exception: " + e + " ]\n");
         }
-
+        return -1;
     }
 
-    private String getOrderEta(Connection connection, String orderID){
-        try{
+    private String alterOrderEta(Connection connection, String orderID) {
+        try {
             Statement statement = null;
             statement = connection.createStatement();
-            ResultSet q = statement.executeQuery(" SELECT * FROM saleco_capdeville.orders WHERE o_id='"+orderID+"'; ");
+            ResultSet q = statement
+                    .executeQuery(" SELECT * FROM saleco_capdeville.orders WHERE o_id='" + orderID + "'; ");
             String orderEta = "";
             while (q.next()) {
                 orderEta = q.getString("o_est");
             }
             return orderEta;
-        }catch(Exception e){
-            System.err.println("[Connected: Exception:" + e.getMessage()+"]");
+        } catch (Exception e) {
+            System.err.println("[ Connected: Exception:" + e.getMessage() + "]\n");
         }
         return "null";
     }
-
 
 }
