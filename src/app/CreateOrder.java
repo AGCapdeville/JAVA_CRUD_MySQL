@@ -43,9 +43,6 @@ public class CreateOrder {
 
             pushOrder(connection, newOrderID, products, amounts, lines, linePrice, orderDate, orderEta);
             display.invoice(connection, newOrderID);
-
-            System.out.println("= Enter any character and then press:'Enter/Return' to return to Main Menu =\n");
-            scanner.next();
         }
     }
 

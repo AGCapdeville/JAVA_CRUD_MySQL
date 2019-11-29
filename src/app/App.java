@@ -10,7 +10,7 @@ public class App {
 
     public static void main(String args[]) throws FileNotFoundException {
         Connection connection = null;
-        Scanner readingInput = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
         Login login = new Login();
         Menu menu = new Menu();
 
@@ -24,9 +24,18 @@ public class App {
             if (!connection.isClosed())
                 System.out.println("[ Connected to MySQL server ] \n");
 
-            if (login.login(connection, readingInput)) {
-                menu.menu(connection, readingInput);
+            while (true) {
+
+                if (login.login(connection, scanner)) {
+                    menu.menu(connection, scanner);
+                }
+                System.out.println("\n = Would you like to continue?, Enter: Y(Yes) OR N(No) =\n");
+                pass = scanner.next();
+                if (pass.contains("N") | pass.contains("n")) {
+                    break;
+                }
             }
+
         } catch (Exception e) {
             System.err.println("[ Conn: Exception: " + e.getMessage() + " ]\n");
         } finally {
@@ -39,7 +48,7 @@ public class App {
                 System.err.println("[ Disc: Exception:" + e.getMessage() + " ]\n");
             }
         }
-        readingInput.close();
+        scanner.close();
     }
 
 }

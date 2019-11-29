@@ -44,8 +44,6 @@ public class UpdateOrder {
         System.out.println(
                 "\n= = = = = = = = = = = = = = = = = = = = = = = UPDATED: = = = = = = = = = = = = = = = = = = = = = = = = =");
         display.invoice(connection, Integer.parseInt(orderID));
-        System.out.println("Enter any character and then press:'Enter/Return' to return to Main Menu\n");
-        scanner.next();
     }
 
     private String askOrderID(Connection connection, Scanner scanner, GUI display, ExistsQuery existsQuery) {

@@ -29,6 +29,8 @@ public class DeleteOrder {
                 try {
                     Statement statement = null;
                     statement = connection.createStatement();
+                    System.out.println("\n= = = = = = = = = = = = = = = = = = = = = = = DELETING: = = = = = = = = = = = = = = = = = = = = = = = =");
+                    display.invoice(connection, id);
                     statement.execute("DELETE FROM line WHERE o_id='" + id + "';");
                     statement.execute("DELETE FROM orders WHERE o_id='" + id + "';");
                 } catch (Exception e) {

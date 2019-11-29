@@ -15,7 +15,7 @@ public class GUI {
         System.out.println("        =   Enter: v, View Order                =");
         System.out.println("        =   Enter: u, Update Order              =");
         System.out.println("        =   Enter: d, Delete Order              =");
-        System.out.println("        =   Enter: q, Exit                      =");
+        System.out.println("        =   Enter: e, Exit                      =");
         System.out.println("        = = = = = = = = = = = = = = = = = = = = =\n");
     }
 
