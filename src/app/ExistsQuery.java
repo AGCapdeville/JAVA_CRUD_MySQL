@@ -9,7 +9,7 @@ public class ExistsQuery {
     public ExistsQuery() {
     }
 
-    public boolean check(Connection connection, String table, String coloumn, String field ) {
+    public boolean check(Connection connection, String table, String coloumn, String field) {
         try {
             Statement statement = null;
             statement = connection.createStatement();

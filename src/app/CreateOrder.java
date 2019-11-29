@@ -20,7 +20,8 @@ public class CreateOrder {
         display.products(connection);
 
         for (int i = 0; i < lines; i++) {
-            System.out.println("\n= = = = = = = = = = = = = = = = = PRODUCT [" + i + "]: = = = = = = = = = = = = = = = = =");
+            System.out.println(
+                    "\n= = = = = = = = = = = = = = = = = PRODUCT [" + i + "]: = = = = = = = = = = = = = = = = =");
             products[i] = askProductID(connection, scanner);
             amounts[i] = askAmount(scanner);
         }
@@ -103,7 +104,8 @@ public class CreateOrder {
         try {
             Statement statement = null;
             statement = connection.createStatement();
-            ResultSet result = statement.executeQuery("SELECT orders.o_id FROM orders ORDER BY orders.o_id desc limit 1");
+            ResultSet result = statement
+                    .executeQuery("SELECT orders.o_id FROM orders ORDER BY orders.o_id desc limit 1");
             while (result.next()) {
                 latestID = result.getString("o_id");
             }
@@ -118,7 +120,7 @@ public class CreateOrder {
             System.err.println("[ Gen new order ID: Exception:" + e.getMessage() + " ]\n");
             return newID;
         }
-        
+
     }
 
     private int askQuantity(Scanner s) {
@@ -131,7 +133,7 @@ public class CreateOrder {
             try {
                 amount = Integer.parseInt(passed);
             } catch (NumberFormatException nfe) {
-                System.err.println("[ Not a valid Number: " + nfe.getMessage()+" ]\n");
+                System.err.println("[ Not a valid Number: " + nfe.getMessage() + " ]\n");
             }
             if (amount > 0 && amount < 10)
                 break;
@@ -154,21 +156,22 @@ public class CreateOrder {
         return product;
     }
 
-    private int askAmount(Scanner s){
+    private int askAmount(Scanner s) {
         System.out.println("\n=   How Many Would You Like To Order?           =");
 
         String passed = "";
         int amount = -1;
-        
-        while (true){
+
+        while (true) {
             System.out.print("= Amount: ");
             passed = s.next();
 
-            try { amount = Integer.parseInt(passed); }
-            catch (NumberFormatException nfe){ 
-                System.err.println("[ Number Format ERROR : " + nfe.getMessage() +" ]\n" ); 
+            try {
+                amount = Integer.parseInt(passed);
+            } catch (NumberFormatException nfe) {
+                System.err.println("[ Number Format ERROR : " + nfe.getMessage() + " ]\n");
             }
-            if (amount < 1000000000 && amount > 0){
+            if (amount < 1000000000 && amount > 0) {
                 break;
             }
             System.err.println("[ Can't order 0 OR more than 10*10^8 ]\n");

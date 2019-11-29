@@ -30,7 +30,7 @@ public class UpdateOrder {
 
         System.out.println("Line to be altered:" + modLine + " Price:" + linePrice + " * " + newQuantity + "\n");
         System.out.println("Old Order EST: " + oldEst + " New Order EST:" + newEst + "\n");
-        
+
         Statement statement = null;
         try {
             statement = connection.createStatement();
@@ -58,10 +58,10 @@ public class UpdateOrder {
             } else {
                 System.err.println(" = INVALID Order ID, ( Enter A Valid Order ID )\n");
             }
-        }    
+        }
     }
 
-    private String askLineID(Connection connection, Scanner scanner, ExistsQuery existsQuery, String orderID){
+    private String askLineID(Connection connection, Scanner scanner, ExistsQuery existsQuery, String orderID) {
         System.out.println("= Which Line Would You Like To Modify?      =");
         String modLine = "";
         while (true) {
@@ -89,7 +89,7 @@ public class UpdateOrder {
                 return newQuantity;
             }
             System.err.println("[ INVALID QUANTITY (QUANTITY MUST BE BETWEEN 1 & 100) ]\n");
-        }    
+        }
     }
 
     private double getOrderLinePrice(Connection connection, String orderID, String line) {
