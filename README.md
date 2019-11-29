@@ -1,4 +1,4 @@
 # JAVA_CRUD_MySQL
 
-![alt text](images_folder/ex1.jpg )
+![terminal ex0](images_folder/0.jpg )
 
