@@ -171,7 +171,7 @@ public class CreateOrder {
             if (amount < 1000000000 && amount > 0) {
                 break;
             }
-            System.err.println("[ Can't order 0 OR more than 10*10^8 ]\n");
+            System.err.println("[ Order has to be between 0 & 10*10^8 ]\n");
 
         }
         return amount;

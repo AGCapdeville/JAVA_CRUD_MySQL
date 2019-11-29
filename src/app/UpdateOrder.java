@@ -28,9 +28,6 @@ public class UpdateOrder {
         String newEst = dh.etaDate(oldEst);
         double newTotal = (newQuantity * linePrice);
 
-        System.out.println("Line to be altered:" + modLine + " Price:" + linePrice + " * " + newQuantity + "\n");
-        System.out.println("Old Order EST: " + oldEst + " New Order EST:" + newEst + "\n");
-
         Statement statement = null;
         try {
             statement = connection.createStatement();
@@ -47,9 +44,10 @@ public class UpdateOrder {
     }
 
     private String askOrderID(Connection connection, Scanner scanner, GUI display, ExistsQuery existsQuery) {
-        System.out.println("= Which Order Would You Like To Update? ( Enter In Order ID )\n");
+        System.out.println("= Which Order Would You Like To Update? ( Enter In Order ID ) =\n");
         String id = "";
         while (true) {
+            System.out.print("= Order ID: ");
             id = scanner.next();
             if (existsQuery.check(connection, "orders", "o_id", id)) {
                 return id;
@@ -73,7 +71,7 @@ public class UpdateOrder {
     }
 
     private int askNewQuantity(Scanner scanner) {
-        System.out.println("= Enter New Quantity (Between 1 & 100)      =");
+        System.out.println("= Enter New Quantity                        =");
         int newQuantity = -1;
         while (true) {
             System.out.print("= New Quantity: ");
@@ -83,10 +81,10 @@ public class UpdateOrder {
             } catch (Exception e) {
                 System.err.println("[ INVALID INT SYNTAX: " + e.getMessage() + " ]\n");
             }
-            if (newQuantity > 0 && newQuantity < 100) {
+            if (newQuantity > 0 && newQuantity < 1000000000) {
                 return newQuantity;
             }
-            System.err.println("[ INVALID QUANTITY (QUANTITY MUST BE BETWEEN 1 & 100) ]\n");
+            System.err.println("[ Order has to be between 0 & 10*10^8 ]\n");
         }
     }
 
