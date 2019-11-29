@@ -1,4 +1,9 @@
 # JAVA_CRUD_MySQL
 
-![terminal ex0](/images_folder/0.png)
+![ERD](/images_folder/ERD.png)
+![terminal example 0](/images_folder/0.png)
+![terminal example 1](/images_folder/1.png)
+![terminal example 2](/images_folder/2.png)
+![terminal example 3](/images_folder/3.png)
+
 
